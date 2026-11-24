@@ -1,5 +1,3 @@
-import { api } from '../frontend/src/lib/api';
-
 const BASE_URL = 'http://localhost:5000/api';
 
 async function runTests() {
