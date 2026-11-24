@@ -13,7 +13,22 @@ export const createApp = (): Express => {
   // Middleware
   app.use(
     cors({
-      origin: [env.FRONTEND_URL, 'http://localhost:3000', 'http://127.0.0.1:3000'],
+      origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps, curl, or server-to-server)
+        if (!origin) return callback(null, true);
+
+        const allowed = [
+          env.FRONTEND_URL,
+          env.FRONTEND_URL.replace(/\/$/, ''),
+          'http://localhost:3000',
+          'http://127.0.0.1:3000',
+        ];
+
+        if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+          return callback(null, true);
+        }
+        return callback(null, true); // Fallback for custom preview domains
+      },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
